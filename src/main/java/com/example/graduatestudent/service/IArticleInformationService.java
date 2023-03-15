@@ -1,7 +1,7 @@
 package com.example.graduatestudent.service;
 
-import com.example.graduatestudent.entity.ArticleInformation;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.graduatestudent.entity.ArticleInformation;
 
 /**
  * <p>
@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IArticleInformationService extends IService<ArticleInformation> {
 
+    Integer insertArticle(ArticleInformation articleInformation);
 }

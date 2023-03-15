@@ -17,5 +17,27 @@
     <sql id="Base_Column_List">
         id, user_id, article_title, article_type, create_time, latest_update_time, article_content
     </sql>
+    <insert id="insertArticleInformation" useGeneratedKeys="true" keyProperty="id">
+        insert into article_information
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="articleContent != null">article_content,</if>
+            <if test="articleTitle != null">article_title,</if>
+            <if test="articleType != null">article_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="latestUpdateTime != null">latest_update_time,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="articleContent != null">#{articleContent},</if>
+            <if test="articleTitle != null">#{articleTitle},</if>
+            <if test="articleType != null">#{articleType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="latestUpdateTime != null">#{latestUpdateTime},</if>
+        </trim>
+    </insert>
 
 </mapper>

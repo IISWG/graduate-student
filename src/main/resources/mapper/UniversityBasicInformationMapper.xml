@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.UniversityBasicInformationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.UniversityBasicInformation">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="area" property="area" />
+        <result column="is_211" property="is211" />
+        <result column="is_985" property="is985" />
+        <result column="is_autonomous_marking" property="isAutonomousMarking" />
+        <result column="is_double_class" property="isDoubleClass" />
+        <result column="school_type" property="schoolType" />
+        <result column="belong_to" property="belongTo" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, area, is_211, is_985, is_autonomous_marking, is_double_class, school_type, belong_to
+    </sql>
+
+</mapper>

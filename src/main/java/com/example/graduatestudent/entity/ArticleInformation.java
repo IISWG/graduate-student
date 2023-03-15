@@ -1,14 +1,17 @@
 package com.example.graduatestudent.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -21,6 +24,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("article_information")
+@Accessors(chain = true)
 @ApiModel(value="ArticleInformation对象", description="文章信息")
 public class ArticleInformation implements Serializable {
 
@@ -53,5 +57,7 @@ public class ArticleInformation implements Serializable {
     @TableField("article_content")
     private String articleContent;
 
-
+    @ApiModelProperty(value = "文章的标签",name = "articleLabelList")
+    @TableField(exist = false)
+    private List<ArticleTag> articleLabelList;
 }

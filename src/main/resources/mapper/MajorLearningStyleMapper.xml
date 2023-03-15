@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.MajorLearningStyleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.MajorLearningStyle">
+        <id column="university_id" property="universityId" />
+        <result column="major_code" property="majorCode" />
+        <result column="is_full_time" property="isFullTime" />
+        <result column="english_number" property="englishNumber" />
+        <result column="math_number" property="mathNumber" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        university_id, major_code, is_full_time, english_number, math_number
+    </sql>
+
+</mapper>

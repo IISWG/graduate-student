@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.UniversityDetailedInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.UniversityDetailedInfo">
+        <id column="university_id" property="universityId" />
+        <result column="official_website" property="officialWebsite" />
+        <result column="admission_brochure" property="admissionBrochure" />
+        <result column="school_forum" property="schoolForum" />
+        <result column="employment_report" property="employmentReport" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        university_id, official_website, admission_brochure, school_forum, employment_report
+    </sql>
+
+</mapper>
