@@ -11,6 +11,7 @@
         <result column="create_time" property="createTime" />
         <result column="latest_update_time" property="latestUpdateTime" />
         <result column="article_content" property="articleContent" />
+        <result column="article_cover" property="articleCover" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -27,6 +28,7 @@
             <if test="articleType != null">article_type,</if>
             <if test="createTime != null">create_time,</if>
             <if test="latestUpdateTime != null">latest_update_time,</if>
+            <if test="articleCover != null">article_cover,</if>
         </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -37,6 +39,7 @@
             <if test="articleType != null">#{articleType},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="latestUpdateTime != null">#{latestUpdateTime},</if>
+            <if test="articleCover != null">#{articleCover},</if>
         </trim>
     </insert>
 

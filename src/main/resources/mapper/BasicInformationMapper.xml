@@ -9,6 +9,7 @@
         <result column="test_state" property="testState" />
         <result column="undergraduate_university" property="undergraduateUniversity" />
         <result column="user_id" property="userId" />
+        <result column="present_state" property="presentState" />
     </resultMap>
 
     <!-- 通用查询结果列 -->

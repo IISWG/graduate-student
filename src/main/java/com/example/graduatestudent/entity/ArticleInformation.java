@@ -3,11 +3,13 @@ package com.example.graduatestudent.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -41,16 +43,24 @@ public class ArticleInformation implements Serializable {
     @TableField("article_title")
     private String articleTitle;
 
+    @ApiModelProperty(value = "文章封面")
+    @TableField("article_cover")
+    private String articleCover;
+
     @ApiModelProperty(value = "文章类别")
     @TableField("article_type")
     private String articleType;
 
     @ApiModelProperty(value = "文章创建时间")
     @TableField("create_time")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
     @ApiModelProperty(value = "文章最近一次修改时间")
     @TableField("latest_update_time")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime latestUpdateTime;
 
     @ApiModelProperty(value = "文章内容")
@@ -60,4 +70,12 @@ public class ArticleInformation implements Serializable {
     @ApiModelProperty(value = "文章的标签",name = "articleLabelList")
     @TableField(exist = false)
     private List<ArticleTag> articleLabelList;
+
+    @ApiModelProperty(value = "返回文章的标签",name = "labelList")
+    @TableField(exist = false)
+    private List<ArticleTag> labelList;
+
+    @ApiModelProperty(value = "文章的附加信息",name = "articleAdditionalInformation")
+    @TableField(exist = false)
+    private ArticleAdditionalInformation articleAdditionalInformation;
 }

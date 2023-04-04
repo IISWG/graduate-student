@@ -1,14 +1,15 @@
 package com.example.graduatestudent.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -40,6 +41,9 @@ public class BasicInformation implements Serializable {
     @ApiModelProperty(value = "院校信息id")
     @TableField("undergraduate_university")
     private Integer undergraduateUniversity;
+    @ApiModelProperty(value = "目前状态")
+    @TableField("present_state")
+    private Integer presentState;
 
     @ApiModelProperty(value = "用户id")
     @TableField("user_id")

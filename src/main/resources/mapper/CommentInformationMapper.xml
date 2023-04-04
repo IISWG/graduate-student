@@ -11,11 +11,12 @@
         <result column="comment_id" property="commentId" />
         <result column="to_id" property="toId" />
         <result column="comment_level" property="commentLevel" />
+        <result column="article_id" property="articleId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, comment_content, comment_time, comment_user_id, comment_id, to_id, comment_level
+        id, comment_content, comment_time, comment_user_id, comment_id, to_id, comment_level, article_id
     </sql>
 
 </mapper>
