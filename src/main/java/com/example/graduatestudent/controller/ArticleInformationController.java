@@ -58,6 +58,25 @@ public class ArticleInformationController {
 
     }
 
+    @GetMapping("/deleteArticle")
+    @ApiOperation(value = "插入文章", notes = "")
+    public BaseResult deleteArticle(Long articleId) {
+        try {
+            boolean removeById = articleInformationService.removeById(articleId);
+            if (removeById) {
+                OkResult okResult = new OkResult("删除文章成功！", "");
+                return okResult;
+            } else {
+                return new ServerErrResult("删除文章失败！");
+            }
+        } catch (Exception e) {
+            log.error("删除文章时报错", e);
+            return new ServerErrResult("删除文章失败！");
+        }
+
+
+    }
+
     @PostMapping("/updateArticle")
     @ApiOperation(value = "更新文章", notes = "")
     public BaseResult updateArticle(@RequestBody ArticleInformation articleInformation) {
@@ -82,8 +101,17 @@ public class ArticleInformationController {
     @ApiOperation(value = "通过用户id获取文章", notes = "")
     public BaseResult getArticleListByUserId(Long userId,Integer pageSize,Integer pageNum) {
         log.info("userId:"+userId+"  pageSize:"+pageSize+"   pageNum:"+pageNum);
-        SelectArticleParam selectArticleParam = new SelectArticleParam(userId);
+        SelectArticleParam selectArticleParam = new SelectArticleParam(userId,null);
         selectArticleParam.setPageSize(pageSize).setPageNum(pageNum);
+        PageResult articleListByUserId = articleInformationService.getArticleListByUserId(selectArticleParam);
+        return new OkResult(articleListByUserId);
+    }
+
+    @GetMapping("/getArticleListByType")
+    @ApiOperation(value = "通过文章类型获取文章", notes = "")
+    public BaseResult getArticleListByType(String type, Integer pageSize, Integer pageNum) {
+        SelectArticleParam selectArticleParam = new SelectArticleParam();
+        selectArticleParam.setType(type).setPageSize(pageSize).setPageNum(pageNum);
         PageResult articleListByUserId = articleInformationService.getArticleListByUserId(selectArticleParam);
         return new OkResult(articleListByUserId);
     }

@@ -23,4 +23,6 @@ import lombok.experimental.Accessors;
 public class SelectArticleParam extends PageParam{
     @ApiModelProperty(value = "文章所属用户的id")
     private Long userId;
+
+    private String type;
 }

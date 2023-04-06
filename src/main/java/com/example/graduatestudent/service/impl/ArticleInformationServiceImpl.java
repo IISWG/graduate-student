@@ -91,7 +91,12 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
     @Override
     public PageResult getArticleListByUserId(SelectArticleParam selectArticleParam) {
         QueryWrapper<ArticleInformation> articleInformationQueryWrapper = new QueryWrapper<>();
-        articleInformationQueryWrapper.eq("user_id", selectArticleParam.getUserId());
+        if (selectArticleParam.getUserId() != null) {
+            articleInformationQueryWrapper.eq("user_id", selectArticleParam.getUserId());
+        }
+        if (selectArticleParam.getType() != null) {
+            articleInformationQueryWrapper.eq("article_type", selectArticleParam.getType());
+        }
         PageResult pageResult = new PageResult();
         Page<ArticleInformation> page = new Page<>(selectArticleParam.getPageNum(), selectArticleParam.getPageSize());
         IPage<ArticleInformation> selectPage = articleInformationMapper.selectPage(page, articleInformationQueryWrapper);
