@@ -1,14 +1,16 @@
 package com.example.graduatestudent.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -22,6 +24,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 @TableName("attention")
 @ApiModel(value="Attention对象", description="关注信息表")
+@Accessors(chain = true)
 public class Attention implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,8 +45,8 @@ public class Attention implements Serializable {
     private LocalDateTime createTime;
 
     @ApiModelProperty(value = "0:是取消关注，1：是关注")
-    @TableField("is")
-    private String is;
+    @TableField("is_attention")
+    private String isAttention = "1";
 
 
 }

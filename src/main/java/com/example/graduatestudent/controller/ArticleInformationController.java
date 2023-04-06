@@ -51,6 +51,7 @@ public class ArticleInformationController {
                 return new ServerErrResult("插入文章失败！");
             }
         } catch (Exception e) {
+
             log.error("插入文章时报错",e);
             return new ServerErrResult("插入文章失败！");
         }

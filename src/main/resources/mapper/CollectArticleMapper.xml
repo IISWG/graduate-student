@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.graduatestudent.mapper.AttentionMapper">
+<mapper namespace="com.example.graduatestudent.mapper.CollectArticleMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.Attention">
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.CollectArticle">
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
-        <result column="focus_user_id" property="focusUserId" />
+        <result column="article_id" property="articleId" />
         <result column="create_time" property="createTime" />
-        <result column="is_attention" property="isAttention" />
+        <result column="is_collect" property="isCollect" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, focus_user_id, create_time, is_attention
+        id, user_id, article_id, create_time, is_collect
     </sql>
 
 </mapper>
