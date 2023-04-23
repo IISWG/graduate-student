@@ -6,6 +6,8 @@ import com.example.graduatestudent.service.IArticleAdditionalInformationService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  * 文章的附加信息表 服务实现类
@@ -17,4 +19,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ArticleAdditionalInformationServiceImpl extends ServiceImpl<ArticleAdditionalInformationMapper, ArticleAdditionalInformation> implements IArticleAdditionalInformationService {
 
+    @Resource
+    ArticleAdditionalInformationMapper articleAdditionalInformationMapper;
+
+    @Override
+    public boolean colAdd1(Long articleId) {
+        return articleAdditionalInformationMapper.colAdd1(articleId);
+    }
+    @Override
+    public boolean colReduce1(Long articleId) {
+        return articleAdditionalInformationMapper.colReduce1(articleId);
+    }
 }

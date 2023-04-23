@@ -4,20 +4,27 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.UniversityBasicInformation">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="area" property="area" />
-        <result column="is_211" property="is211" />
-        <result column="is_985" property="is985" />
-        <result column="is_autonomous_marking" property="isAutonomousMarking" />
-        <result column="is_double_class" property="isDoubleClass" />
-        <result column="school_type" property="schoolType" />
-        <result column="belong_to" property="belongTo" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="area" property="area"/>
+        <result column="is_211" property="is211"/>
+        <result column="is_985" property="is985"/>
+        <result column="is_autonomous_marking" property="isAutonomousMarking"/>
+        <result column="is_double_class" property="isDoubleClass"/>
+        <result column="school_type" property="schoolType"/>
+        <result column="belong_to" property="belongTo"/>
+        <result column="is_ordinary" property="isOrdinary"/>
+        <result column="picture" property="picture"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, area, is_211, is_985, is_autonomous_marking, is_double_class, school_type, belong_to
+        id
+        , name, area, is_211, is_985, is_autonomous_marking, is_double_class, school_type, belong_to, is_ordinary, picture
     </sql>
+    <select id="getCollegeListGroupByArea"
+            resultType="com.example.graduatestudent.entity.result.CollegeListGBAreaResult">
+        select name from
+    </select>
 
 </mapper>

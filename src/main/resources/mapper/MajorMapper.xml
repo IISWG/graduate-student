@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.MajorMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.Major">
+        <id column="major_code" property="majorCode"/>
+        <result column="rank_num" property="rankNum"/>
+        <result column="major_name" property="majorName"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="major_type" property="majorType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        major_code
+        , rank_num, major_name, parent_code, major_type
+    </sql>
+    <select id="getMajor" resultType="com.example.graduatestudent.entity.Major">
+        SELECT major.*, schoolNum
+        FROM major
+        LEFT JOIN (
+        SELECT major_code, COUNT(*) as schoolNum
+        FROM major_learning_style
+        WHERE
+        <if test="fullTime!=null">
+            is_full_time=#{fullTime} and
+        </if>
+        <if test="englishNumber!=null">
+            english_number=#{englishNumber} and
+        </if>
+        <if test="mathNumber!=null">
+            math_number=#{mathNumber} and
+        </if>
+        1 = 1
+        GROUP BY major_code) as n
+        on major.major_code = n.major_code
+        WHERE major.rank_num = '3'
+        and schoolNum is not null
+        AND
+        (major.major_code LIKE CONCAT(#{majorCode},'%')
+        <if test="content!=null">
+            and major_name LIKE CONCAT('%',CONCAT(#{content},'%'))
+        </if>
+        )
+        <if test="majorType!=null">
+            and major_type = #{majorType}
+        </if>
+        LIMIT #{pageNum},#{pageSize};
+    </select>
+    <select id="getMajorTotal" resultType="integer">
+        SELECT count(*)
+        FROM major
+        LEFT JOIN (
+        SELECT major_code, COUNT(*) as schoolNum
+        FROM major_learning_style
+        WHERE
+        <if test="fullTime!=null">
+            is_full_time=#{fullTime} and
+        </if>
+        <if test="englishNumber!=null">
+            english_number=#{englishNumber} and
+        </if>
+        <if test="mathNumber!=null">
+            math_number=#{mathNumber} and
+        </if>
+        1 = 1
+        GROUP BY major_code) as n
+        on major.major_code = n.major_code
+        WHERE major.rank_num = '3'
+        and schoolNum is not null
+        AND
+        (major.major_code LIKE CONCAT(#{majorCode},'%')
+        <if test="content!=null">
+            and major_name LIKE CONCAT('%',CONCAT(#{content},'%'))
+        </if>
+        )
+        <if test="majorType!=null">
+            and major_type = #{majorType}
+        </if>
+    </select>
+
+</mapper>

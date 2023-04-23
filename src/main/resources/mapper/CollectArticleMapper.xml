@@ -16,4 +16,5 @@
         id, user_id, article_id, create_time, is_collect
     </sql>
 
+
 </mapper>

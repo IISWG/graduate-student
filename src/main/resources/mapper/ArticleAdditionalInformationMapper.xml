@@ -14,5 +14,19 @@
     <sql id="Base_Column_List">
         article_id, collection_number, likes_number, hits_number
     </sql>
+    <update id="colAdd1">
+        update article_additional_information
+        <set>
+            collection_number = collection_number + 1
+        </set>
+        where article_id = #{articleId};
+    </update>
+    <update id="colReduce1">
+        update article_additional_information
+        <set>
+            collection_number = collection_number - 1
+        </set>
+        where article_id = #{articleId};
+    </update>
 
 </mapper>

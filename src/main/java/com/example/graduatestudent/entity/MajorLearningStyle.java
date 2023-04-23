@@ -1,13 +1,15 @@
 package com.example.graduatestudent.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -19,6 +21,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 @TableName("major_learning_style")
 @ApiModel(value="MajorLearningStyle对象", description="学校的专业学习方式信息")
 public class MajorLearningStyle implements Serializable {
@@ -37,11 +40,11 @@ public class MajorLearningStyle implements Serializable {
     @TableField("is_full_time")
     private Integer isFullTime;
 
-    @ApiModelProperty(value = "0：其他；1：英语1；2：英语2")
+    @ApiModelProperty(value = "1：英语1；2：英语2；3：其他；")
     @TableField("english_number")
     private Integer englishNumber;
 
-    @ApiModelProperty(value = "0：其他；1：数学1；2：数学2；3：数学3")
+    @ApiModelProperty(value = "1：数学1；2：数学2；3：数学3；4：其他；")
     @TableField("math_number")
     private Integer mathNumber;
 

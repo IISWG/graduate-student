@@ -12,5 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-03-14
  */
 public interface IArticleAdditionalInformationService extends IService<ArticleAdditionalInformation> {
+    public boolean colAdd1(Long articleId);
 
+    boolean colReduce1(Long articleId);
 }

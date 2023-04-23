@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class QiniuUtils {
 
-    public static  final String url = "http://rrwfyolhs.hn-bkt.clouddn.com/";
+    public static  final String url = "http://img.galaxyspace.tech/";
 
     @Value("${qiniu.oss.bucket}")
     private String bucket ;

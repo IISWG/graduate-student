@@ -22,7 +22,8 @@ public class PageResult {
     /**
      * 总页数
      */
-    private Long pages;
+    private Long
+            pages;
 
     /**
      * 结果集

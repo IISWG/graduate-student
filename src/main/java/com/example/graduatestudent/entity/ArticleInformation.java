@@ -78,4 +78,7 @@ public class ArticleInformation implements Serializable {
     @ApiModelProperty(value = "文章的附加信息",name = "articleAdditionalInformation")
     @TableField(exist = false)
     private ArticleAdditionalInformation articleAdditionalInformation;
+    @ApiModelProperty(value = "文章作者信息", name = "userInformation")
+    @TableField(exist = false)
+    private UserInformation userInformation;
 }

@@ -3,6 +3,7 @@ package com.example.graduatestudent.controller;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.graduatestudent.entity.UserInformation;
 import com.example.graduatestudent.entity.param.MailVerifyParam;
 import com.example.graduatestudent.entity.result.BaseResult;
@@ -125,4 +126,33 @@ public class UserController {
         }
 
     }
+
+    @PostMapping("/updateHeadPicture")
+    @ResponseBody
+    public BaseResult updateHeadPicture(@RequestBody UserInformation userInformation) {
+        boolean save = userInformationService.update(new UpdateWrapper<UserInformation>()
+                .set("head_picture", userInformation.getHeadPicture())
+                .eq("id", userInformation.getId()));
+        if (save) {
+            return new OkResult("更新头像成功！");
+        } else {
+            return new BaseResult(401, "更新头像失败！");
+        }
+
+    }
+
+    @PostMapping("/updateName")
+    @ResponseBody
+    public BaseResult updateName(@RequestBody UserInformation userInformation) {
+        boolean save = userInformationService.update(new UpdateWrapper<UserInformation>()
+                .set("nickname", userInformation.getNickname())
+                .eq("id", userInformation.getId()));
+        if (save) {
+            return new OkResult("更新昵称成功！");
+        } else {
+            return new BaseResult(401, "更新昵称失败！");
+        }
+
+    }
+
 }

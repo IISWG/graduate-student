@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.SchoolDetailedInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.SchoolDetailedInfo">
+        <id column="school_id" property="schoolId" />
+        <result column="school_name" property="schoolName" />
+        <result column="school_url" property="schoolUrl" />
+        <result column="school_email" property="schoolEmail" />
+        <result column="school_tel" property="schoolTel" />
+        <result column="school_addr" property="schoolAddr" />
+        <result column="admission_office_tel" property="admissionOfficeTel" />
+        <result column="admission_office_email" property="admissionOfficeEmail" />
+        <result column="admission_office_url" property="admissionOfficeUrl" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        school_id, school_name, school_url, school_email, school_tel, school_addr, admission_office_tel, admission_office_email, admission_office_url
+    </sql>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.UserTestInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.UserTestInfo">
+        <id column="id" property="id" />
+        <result column="time" property="time" />
+        <result column="major" property="major" />
+        <result column="university" property="university" />
+        <result column="subject" property="subject" />
+        <result column="cross_examination_situation" property="crossExaminationSituation" />
+        <result column="test_state" property="testState" />
+        <result column="present_state" property="presentState" />
+        <result column="undergraduate_university" property="undergraduateUniversity" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, time, major, university, subject, cross_examination_situation, test_state, present_state, undergraduate_university
+    </sql>
+
+</mapper>

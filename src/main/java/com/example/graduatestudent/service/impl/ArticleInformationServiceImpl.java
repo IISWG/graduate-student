@@ -4,16 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.graduatestudent.entity.ArticleAdditionalInformation;
-import com.example.graduatestudent.entity.ArticleInformation;
-import com.example.graduatestudent.entity.ArticleTag;
-import com.example.graduatestudent.entity.TagMap;
+import com.example.graduatestudent.entity.*;
 import com.example.graduatestudent.entity.param.SelectArticleParam;
 import com.example.graduatestudent.entity.result.PageResult;
-import com.example.graduatestudent.mapper.ArticleAdditionalInformationMapper;
-import com.example.graduatestudent.mapper.ArticleInformationMapper;
-import com.example.graduatestudent.mapper.ArticleTagMapper;
-import com.example.graduatestudent.mapper.TagMapMapper;
+import com.example.graduatestudent.mapper.*;
 import com.example.graduatestudent.service.IArticleInformationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,6 +39,12 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
     TagMapMapper tagMapMapper;
     @Resource
     ArticleAdditionalInformationMapper articleAdditionalInformationMapper;
+    @Resource
+    CollectArticleMapper collectArticleMapper;
+    @Resource
+    AttentionMapper attentionMapper;
+    @Resource
+    UserInformationMapper userInformationMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -115,11 +117,77 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
             ArticleAdditionalInformation articleAdditionalInformation = articleAdditionalInformationMapper
                     .selectOne(new QueryWrapper<ArticleAdditionalInformation>()
                             .eq("article_id", record.getId()));
+            UserInformation userInformation = userInformationMapper.selectById(record.getUserId());
 //            List<ArticleTag> articleLabelList = articleTagMapper.selectList(new QueryWrapper<ArticleTag>().eq("article_id", record.getId()));
-            record.setLabelList(articleTags);
+            record.setLabelList(articleTags).setUserInformation(userInformation);
             record.setArticleAdditionalInformation(articleAdditionalInformation);
         }
         pageResult.setRecords(records);
         return pageResult;
+    }
+
+    @Override
+    public List<ArticleInformation> getCollectArticleListByUserId(String userId) {
+        List<CollectArticle> collectArticleList = collectArticleMapper.selectList(new QueryWrapper<CollectArticle>()
+                .eq("user_id", userId));
+        ArrayList<ArticleInformation> articleInformations = new ArrayList<>();
+        for (CollectArticle collectArticle : collectArticleList) {
+            ArticleInformation articleInformation = articleInformationMapper.selectById(collectArticle.getArticleId());
+            articleInformations.add(articleInformation);
+        }
+        for (ArticleInformation record : articleInformations) {
+            List<TagMap> tagMapList = tagMapMapper.selectList(new QueryWrapper<TagMap>().eq("article_id", record.getId()));
+            ArrayList<ArticleTag> articleTags = new ArrayList<>();
+            for (TagMap tagMap : tagMapList) {
+                ArticleTag articleTag = articleTagMapper.selectById(tagMap.getTagId());
+                articleTags.add(articleTag);
+            }
+            ArticleAdditionalInformation articleAdditionalInformation = articleAdditionalInformationMapper
+                    .selectOne(new QueryWrapper<ArticleAdditionalInformation>()
+                            .eq("article_id", record.getId()));
+            UserInformation userInformation = userInformationMapper.selectById(record.getUserId());
+            record.setLabelList(articleTags).setUserInformation(userInformation);
+            record.setArticleAdditionalInformation(articleAdditionalInformation);
+        }
+
+        return articleInformations;
+    }
+
+    @Override
+    public List<ArticleInformation> getAttentionUserOfArticle(String userId) {
+        List<Attention> attentionList = attentionMapper.selectList(new QueryWrapper<Attention>()
+                .eq("user_id", userId).eq("is_attention",1));
+        ArrayList<ArticleInformation> articleInformations = new ArrayList<>(attentionList.size() * 10);
+        for (Attention attention : attentionList) {
+            UserInformation userInformation = userInformationMapper.selectById(attention.getFocusUserId());
+            Page<ArticleInformation> articleInformationPage = new Page<>(1, 10);
+            Page<ArticleInformation> articleInformationList = articleInformationMapper.selectPage(articleInformationPage, new QueryWrapper<ArticleInformation>()
+                    .eq("user_id", attention.getFocusUserId()));
+            List<ArticleInformation> records = articleInformationList.getRecords();
+            for (ArticleInformation record : records) {
+                record.setUserInformation(userInformation);
+            }
+            articleInformations.addAll(records);
+        }
+        for (ArticleInformation record : articleInformations) {
+            List<TagMap> tagMapList = tagMapMapper.selectList(new QueryWrapper<TagMap>().eq("article_id", record.getId()));
+            ArrayList<ArticleTag> articleTags = new ArrayList<>();
+            for (TagMap tagMap : tagMapList) {
+                ArticleTag articleTag = articleTagMapper.selectById(tagMap.getTagId());
+                articleTags.add(articleTag);
+            }
+            ArticleAdditionalInformation articleAdditionalInformation = articleAdditionalInformationMapper
+                    .selectOne(new QueryWrapper<ArticleAdditionalInformation>()
+                            .eq("article_id", record.getId()));
+            record.setLabelList(articleTags);
+            record.setArticleAdditionalInformation(articleAdditionalInformation);
+        }
+        Collections.sort(articleInformations, new Comparator<ArticleInformation>() {
+            @Override
+            public int compare(ArticleInformation o1, ArticleInformation o2) {
+                return o2.getLatestUpdateTime().toString().compareTo(o1.getLatestUpdateTime().toString());
+            }
+        });
+        return articleInformations;
     }
 }

@@ -3,10 +3,12 @@ package com.example.graduatestudent.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.graduatestudent.entity.Attention;
+import com.example.graduatestudent.entity.UserInformation;
 import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.OkResult;
 import com.example.graduatestudent.entity.result.ServerErrResult;
 import com.example.graduatestudent.service.IAttentionService;
+import com.example.graduatestudent.service.IUserInformationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -29,25 +31,32 @@ import java.util.List;
 public class AttentionController {
     @Resource
     IAttentionService attentionService;
+    @Resource
+    IUserInformationService userInformationService;
 
     @PostMapping("/attention")
     @ApiOperation(value = "关注", notes = "")
     public BaseResult attention(@RequestBody Attention attention) {
         attention.setCreateTime(LocalDateTime.now());
-        log.info("attention:{}",attention);
+        log.info("attention:{}", attention);
         Attention attentionOne = attentionService.getOne(new QueryWrapper<Attention>()
                 .eq("user_id", attention.getUserId())
                 .eq("focus_user_id", attention.getFocusUserId()));
         try {
             boolean save;
-            if(attentionOne == null){
+            if (attentionOne == null) {
                 save = attentionService.save(attention);
-            }else {
+            } else {
                 attentionOne.setIsAttention("1");
                 save = attentionService.updateById(attentionOne);
             }
             if (save) {
-                Attention attentionServiceById = attentionService.getById(attention.getId());
+                Attention attentionServiceById = attentionService.getOne(
+                        new QueryWrapper<Attention>()
+                        .eq("user_id", attention.getUserId())
+                        .eq("focus_user_id", attention.getFocusUserId()));
+                UserInformation userInformation = userInformationService.getById(attention.getFocusUserId());
+                attentionServiceById.setFocusUserInfo(userInformation);
                 OkResult okResult = new OkResult("关注成功！", attentionServiceById);
                 return okResult;
             } else {
@@ -64,9 +73,9 @@ public class AttentionController {
     @ApiOperation(value = "取消关注", notes = "")
     public BaseResult deleteAttention(@RequestBody Attention attention) {
         attention.setCreateTime(LocalDateTime.now()).setIsAttention("0");
-        log.info("attention:{}",attention);
+        log.info("attention:{}", attention);
         try {
-            boolean save = attentionService.saveOrUpdate(attention);
+            boolean save = attentionService.updateById(attention);
             if (save) {
                 OkResult okResult = new OkResult("取消关注成功！", "");
                 return okResult;
@@ -84,7 +93,11 @@ public class AttentionController {
     public BaseResult getAttentionListByUserId(Long userId) {
         try {
             List<Attention> attentionList = attentionService.list(new QueryWrapper<Attention>()
-                    .eq("user_id", userId).eq("is_attention","1"));
+                    .eq("user_id", userId).eq("is_attention", "1"));
+            for (Attention attention : attentionList) {
+                UserInformation userInformation = userInformationService.getById(attention.getFocusUserId());
+                attention.setFocusUserInfo(userInformation);
+            }
             OkResult okResult = new OkResult(attentionList);
             return okResult;
         } catch (Exception e) {

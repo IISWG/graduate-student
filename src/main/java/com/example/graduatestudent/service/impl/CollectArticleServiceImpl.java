@@ -1,10 +1,12 @@
 package com.example.graduatestudent.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduatestudent.entity.CollectArticle;
 import com.example.graduatestudent.mapper.CollectArticleMapper;
 import com.example.graduatestudent.service.ICollectArticleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -16,5 +18,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CollectArticleServiceImpl extends ServiceImpl<CollectArticleMapper, CollectArticle> implements ICollectArticleService {
+
+    @Resource
+    CollectArticleMapper collectArticleMapper;
+
 
 }

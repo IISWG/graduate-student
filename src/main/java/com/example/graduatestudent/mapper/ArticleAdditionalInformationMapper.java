@@ -12,5 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2023-03-14
  */
 public interface ArticleAdditionalInformationMapper extends BaseMapper<ArticleAdditionalInformation> {
+    public boolean colAdd1(Long articleId);
 
+    public boolean colReduce1(Long articleId);
 }

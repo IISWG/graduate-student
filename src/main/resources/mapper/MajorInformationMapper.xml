@@ -4,15 +4,17 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.MajorInformation">
-        <id column="professional_code" property="professionalCode" />
-        <result column="professional_name" property="professionalName" />
-        <result column="major_type" property="majorType" />
-        <result column="professional_category" property="professionalCategory" />
+        <id column="professional_code" property="professionalCode"/>
+        <result column="professional_name" property="professionalName"/>
+        <result column="major_type" property="majorType"/>
+        <result column="professional_category" property="professionalCategory"/>
+        <result column="introduction" property="introduction"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        professional_code, professional_name, major_type, professional_category
+        professional_code
+        , professional_name, major_type, professional_category, introduction
     </sql>
 
 </mapper>

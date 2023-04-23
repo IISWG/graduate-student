@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -115,5 +116,19 @@ public class ArticleInformationController {
         selectArticleParam.setType(type).setPageSize(pageSize).setPageNum(pageNum);
         PageResult articleListByUserId = articleInformationService.getArticleListByUserId(selectArticleParam);
         return new OkResult(articleListByUserId);
+    }
+
+    @GetMapping("/getCollectArticleListByUserId")
+    @ApiOperation(value = "通过用户id获取收藏文章", notes = "")
+    public BaseResult getCollectArticleListByUserId(String userId) {
+        List<ArticleInformation> articleInformations = articleInformationService.getCollectArticleListByUserId(userId);
+        return new OkResult(articleInformations);
+    }
+
+    @GetMapping("/getAttentionUserOfArticle")
+    @ApiOperation(value = "通过收藏用户推荐文章", notes = "")
+    public BaseResult getAttentionUserOfArticle(String userId) {
+        List<ArticleInformation> articleInformations = articleInformationService.getAttentionUserOfArticle(userId);
+        return new OkResult(articleInformations);
     }
 }

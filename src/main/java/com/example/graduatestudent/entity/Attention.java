@@ -48,5 +48,9 @@ public class Attention implements Serializable {
     @TableField("is_attention")
     private String isAttention = "1";
 
+    @ApiModelProperty(value = "被关注人用户信息")
+    @TableField(exist = false)
+    private UserInformation focusUserInfo;
+
 
 }

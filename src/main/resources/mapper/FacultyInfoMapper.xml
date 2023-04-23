@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduatestudent.mapper.FacultyInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.graduatestudent.entity.FacultyInfo">
+        <id column="id" property="id" />
+        <result column="faculty_name" property="facultyName" />
+        <result column="faculty_tel" property="facultyTel" />
+        <result column="faculty_email" property="facultyEmail" />
+        <result column="faculty_url" property="facultyUrl" />
+        <result column="university_id" property="universityId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, faculty_name, faculty_tel, faculty_email, faculty_url, university_id
+    </sql>
+
+</mapper>

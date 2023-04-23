@@ -1,7 +1,12 @@
 package com.example.graduatestudent.service;
 
-import com.example.graduatestudent.entity.UniversityBasicInformation;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.graduatestudent.entity.UniversityBasicInformation;
+import com.example.graduatestudent.entity.param.GetCollegeListGBAreaParam;
+import com.example.graduatestudent.entity.param.SelectCollegeParam;
+import com.example.graduatestudent.entity.result.PageResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUniversityBasicInformationService extends IService<UniversityBasicInformation> {
 
+    public PageResult getCollegeList(SelectCollegeParam selectCollegeParam);
+
+    UniversityBasicInformation getCollegeInfo(Integer id);
+
+    List<?> getCollegeListGroupByArea(GetCollegeListGBAreaParam param);
 }
