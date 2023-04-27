@@ -75,5 +75,8 @@ public class Major implements Serializable {
     @ApiModelProperty(value = "该专业开设的信息", name = "schoolIdList")
     @TableField(exist = false)
     private List<Long> schoolIdList;
+    @ApiModelProperty(value = "下一级专业的信息", name = "childMajorList")
+    @TableField(exist = false)
+    private List<Major> childMajorList;
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author muxin
@@ -31,10 +31,11 @@ import java.util.List;
 public class MajorController {
     @Resource
     IMajorService majorService;
+
     @PostMapping("/getMajorList")
     @ApiOperation(value = "通过专业的属性和搜索内容获得专业信息列表", notes = "")
     public BaseResult getMajorList(@RequestBody SelectMajorListParam selectMajorListParam) {
-        log.info("selectMajorListParam:{}",selectMajorListParam);
+        log.info("selectMajorListParam:{}", selectMajorListParam);
         String majorType = selectMajorListParam.getMajorType();
         String majorCode = selectMajorListParam.getMajorCode();
         char[] chars = majorCode.toCharArray();
@@ -58,12 +59,12 @@ public class MajorController {
     public BaseResult getMajor() {
         List<Major> majorFirst = majorService.list(new QueryWrapper<Major>()
                 .eq("rank_num", 1)
-                .likeRight("major_code",1));
+                .likeRight("major_code", 1));
         ArrayList<List<Major>> majorSecond = new ArrayList<>();
         for (Major major : majorFirst) {
             List<Major> list = majorService.list(new QueryWrapper<Major>()
                     .eq("rank_num", 2)
-                    .likeRight("parent_code", major.getMajorCode().replaceFirst("1","_")));
+                    .likeRight("parent_code", major.getMajorCode().replaceFirst("1", "_")));
             majorSecond.add(list);
         }
         MajorTypeResult majorTypeResult = new MajorTypeResult(majorFirst, majorSecond);
@@ -71,6 +72,36 @@ public class MajorController {
 
     }
 
+    @GetMapping("/getMajorListByType")
+    @ApiOperation(value = "", notes = "")
+    public BaseResult getMajorListByType() {
+        List<Major> academicList = majorService.list(new QueryWrapper<Major>()
+                .eq("rank_num", 1)
+                .likeRight("major_code", 1));
+        List<Major> professionalList = majorService.list(new QueryWrapper<Major>()
+                .eq("rank_num", 1)
+                .likeRight("major_code", 2));
+        list(academicList);
+        list(professionalList);
+        ArrayList<List<Major>> lists = new ArrayList<>();
+        lists.add(academicList);
+        lists.add(professionalList);
+        return new OkResult(lists);
+
+    }
+
+    private void list(List<Major> professionalList) {
+        for (Major major : professionalList) {
+            List<Major> majors = majorService.list(new QueryWrapper<Major>()
+                    .eq("parent_code", major.getMajorCode()));
+            for (Major m : majors) {
+                List<Major> ms = majorService.list(new QueryWrapper<Major>()
+                        .eq("parent_code", m.getMajorCode()));
+                m.setChildMajorList(ms);
+            }
+            major.setChildMajorList(majors);
+        }
+    }
 
 
 }

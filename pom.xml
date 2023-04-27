@@ -136,7 +136,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.14.2</version>
+            <version>4.11.0</version>
             <scope>compile</scope>
         </dependency>
         <!--实现邮箱验证-->
@@ -149,6 +149,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.meilisearch.sdk</groupId>
+            <artifactId>meilisearch-java</artifactId>
+            <version>0.11.0</version>
+<!--            <type>pom</type>-->
         </dependency>
     </dependencies>
 

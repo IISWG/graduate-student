@@ -1,17 +1,28 @@
 package com.example.graduatestudent.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduatestudent.entity.*;
+import com.example.graduatestudent.entity.param.SelectArticlCirleParam;
 import com.example.graduatestudent.entity.param.SelectArticleParam;
 import com.example.graduatestudent.entity.result.PageResult;
 import com.example.graduatestudent.mapper.*;
 import com.example.graduatestudent.service.IArticleInformationService;
+import com.meilisearch.sdk.Client;
+import com.meilisearch.sdk.Config;
+import com.meilisearch.sdk.SearchRequest;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
+import com.meilisearch.sdk.model.SearchResultPaginated;
+import com.meilisearch.sdk.model.Searchable;
+import com.meilisearch.sdk.model.Settings;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -45,6 +56,8 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
     AttentionMapper attentionMapper;
     @Resource
     UserInformationMapper userInformationMapper;
+    @Resource
+    CommentInformationMapper commentInformationMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -189,5 +202,49 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
             }
         });
         return articleInformations;
+    }
+
+    @Override
+    public PageResult getCircleOfArticle(@RequestBody SelectArticlCirleParam param) throws MeilisearchException {
+        Config config = new Config("http://47.120.9.82:7700","masterKey");
+        Client client = new Client(config);
+        Settings settings = new Settings();
+        settings.setSearchableAttributes(new String[]{"userTestInfo.major", "userTestInfo.university", "articleTitle", "articleContent"});
+        client.index("article_information").updateSettings(settings);
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(Strings.isBlank(param.getMajorCode()) ? "" : param.getMajorCode())
+                .append(Strings.isBlank(param.getSchoolId()) ? "" : param.getSchoolId())
+                .append(Strings.isBlank(param.getContent()) ? "" : param.getContent());
+        String search = stringBuffer.toString();
+        log.info("search: {}",search);
+        SearchRequest searchRequest = SearchRequest.builder()
+                .q(search)
+                .page(param.getPageNum())
+                .limit(param.getPageSize())
+//                .offset((param.getPageNum()-1)*param.getPageSize())
+                //.attributesToRetrieve(new String[]{"userTestInfo.major","userTestInfo.university","articleTitle","articleContent"})
+                .sort(new String[]{"latestUpdateTime:desc"})
+                .build();
+        Searchable information = client.index("article_information").search(searchRequest);
+        SearchResultPaginated article_information = (SearchResultPaginated) information;
+        log.info("getFacetDistribution:{}"+JSON.toJSONString(article_information.getFacetDistribution()));
+        log.info("getHits:{}"+JSON.toJSONString(article_information.getHits()));
+        log.info("getQuery:{}"+JSON.toJSONString(article_information.getQuery()));
+        log.info("article_information.getTotalHits():{}"+article_information.getTotalHits());
+        log.info("article_information.getTotalPages():{}"+article_information.getTotalPages());
+//        article_information.getTotalPages();
+        PageResult pageResult = new PageResult();
+        pageResult.setPages((long) article_information.getTotalPages());
+        pageResult.setTotal((long) article_information.getTotalHits());
+        List<ArticleInformation> articleInformations = JSON.parseArray(JSON.toJSONString(article_information.getHits()), ArticleInformation.class);
+        for (ArticleInformation articleInformation : articleInformations) {
+            UserInformation userInformation = userInformationMapper.selectById(articleInformation.getUserId());
+            articleInformation.setUserInformation(userInformation);
+            Integer count = commentInformationMapper.selectCount(new QueryWrapper<CommentInformation>()
+                    .eq("article_id", articleInformation.getId()));
+            articleInformation.setCommentCount(count);
+        }
+        pageResult.setRecords(articleInformations);
+        return pageResult;
     }
 }

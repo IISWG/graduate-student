@@ -74,6 +74,9 @@ public class ArticleInformation implements Serializable {
     @ApiModelProperty(value = "返回文章的标签",name = "labelList")
     @TableField(exist = false)
     private List<ArticleTag> labelList;
+    @ApiModelProperty(value = "评论数量", name = "commentCount")
+    @TableField(exist = false)
+    private Integer commentCount;
 
     @ApiModelProperty(value = "文章的附加信息",name = "articleAdditionalInformation")
     @TableField(exist = false)
@@ -81,4 +84,7 @@ public class ArticleInformation implements Serializable {
     @ApiModelProperty(value = "文章作者信息", name = "userInformation")
     @TableField(exist = false)
     private UserInformation userInformation;
+    @ApiModelProperty(value = "", name = "userTestInfo")
+    @TableField(exist = false)
+    private UserTestInfo userTestInfo;
 }

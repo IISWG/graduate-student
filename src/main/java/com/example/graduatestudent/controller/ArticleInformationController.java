@@ -2,12 +2,14 @@ package com.example.graduatestudent.controller;
 
 
 import com.example.graduatestudent.entity.ArticleInformation;
+import com.example.graduatestudent.entity.param.SelectArticlCirleParam;
 import com.example.graduatestudent.entity.param.SelectArticleParam;
 import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.OkResult;
 import com.example.graduatestudent.entity.result.PageResult;
 import com.example.graduatestudent.entity.result.ServerErrResult;
 import com.example.graduatestudent.service.IArticleInformationService;
+import com.meilisearch.sdk.exceptions.MeilisearchException;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -129,6 +131,14 @@ public class ArticleInformationController {
     @ApiOperation(value = "通过收藏用户推荐文章", notes = "")
     public BaseResult getAttentionUserOfArticle(String userId) {
         List<ArticleInformation> articleInformations = articleInformationService.getAttentionUserOfArticle(userId);
+        return new OkResult(articleInformations);
+    }
+
+    @PostMapping("/getCircleOfArticle")
+    @ApiOperation(value = "通过目标专业和目标院校分圈返回文章，按时间排序", notes = "")
+    public BaseResult getCircleOfArticle(@RequestBody SelectArticlCirleParam selectArticlCirleParam) throws MeilisearchException {
+        log.info("selectArticlCirleParam:{}",selectArticlCirleParam);
+        PageResult articleInformations = articleInformationService.getCircleOfArticle(selectArticlCirleParam);
         return new OkResult(articleInformations);
     }
 }

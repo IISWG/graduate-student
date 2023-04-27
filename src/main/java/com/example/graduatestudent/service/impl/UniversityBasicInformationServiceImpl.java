@@ -101,9 +101,9 @@ public class UniversityBasicInformationServiceImpl extends ServiceImpl<Universit
         ArrayList<CollegeListGBAreaResult> collegeListGBAreaResults = new ArrayList<>();
         HashMap<String, CollegeListGBAreaResult> hashMap = new HashMap<>();
         if (param.getMajorName() != null) {
+            String[] s = param.getMajorName().split(" ");
             Major major = majorMapper.selectOne(new QueryWrapper<Major>()
-                    .eq("major_name", param.getMajorName())
-                    .eq("rank_num", 3));
+                    .eq("major_code", s[0]));
 
             List<MajorLearningStyle> collegeId = majorLearningStyleMapper.selectList(
                     new QueryWrapper<MajorLearningStyle>()
