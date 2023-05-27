@@ -89,7 +89,7 @@ public class AttentionController {
         }
     }
 
-    @GetMapping("getAttentionListByUserId")
+    @GetMapping("/getAttentionListByUserId")
     public BaseResult getAttentionListByUserId(Long userId) {
         try {
             List<Attention> attentionList = attentionService.list(new QueryWrapper<Attention>()

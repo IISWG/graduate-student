@@ -28,5 +28,18 @@
         </set>
         where article_id = #{articleId};
     </update>
-
+    <update id="praAdd1">
+        update article_additional_information
+        <set>
+            likes_number = likes_number + 1
+        </set>
+        where article_id = #{articleId};
+    </update>
+    <update id="praReduce1">
+        update article_additional_information
+        <set>
+            likes_number = likes_number - 1
+        </set>
+        where article_id = #{articleId};
+    </update>
 </mapper>

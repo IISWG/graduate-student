@@ -74,15 +74,48 @@ public class MajorController {
 
     @GetMapping("/getMajorListByType")
     @ApiOperation(value = "", notes = "")
-    public BaseResult getMajorListByType() {
+    public BaseResult getMajorListByType(String name) {
+        List<Major> academicList;
+        List<Major> professionalList;
+        if (name == null || "".equals(name)) {
+            academicList = majorService.list(new QueryWrapper<Major>()
+                    .eq("rank_num", 1)
+                    .likeRight("major_code", 1));
+            professionalList = majorService.list(new QueryWrapper<Major>()
+                    .eq("rank_num", 1)
+                    .likeRight("major_code", 2));
+            list(academicList);
+            list(professionalList);
+        } else {
+            academicList = majorService.list(new QueryWrapper<Major>()
+                    .eq("rank_num", 3)
+                    .likeRight("major_code", 1)
+                    .like("major_name",name));
+           professionalList = majorService.list(new QueryWrapper<Major>()
+                    .eq("rank_num", 3)
+                    .likeRight("major_code", 2)
+                    .like("major_name",name));
+        }
+        ArrayList<List<Major>> lists = new ArrayList<>();
+        lists.add(academicList);
+        lists.add(professionalList);
+        return new OkResult(lists);
+
+    }
+
+    @GetMapping("/getMajorListByName")
+    @ApiOperation(value = "", notes = "")
+    public BaseResult getMajorListByName(String name) {
         List<Major> academicList = majorService.list(new QueryWrapper<Major>()
-                .eq("rank_num", 1)
-                .likeRight("major_code", 1));
+                .eq("rank_num", 3)
+                .likeRight("major_code", 1)
+                .like("major_name",name));
         List<Major> professionalList = majorService.list(new QueryWrapper<Major>()
-                .eq("rank_num", 1)
-                .likeRight("major_code", 2));
-        list(academicList);
-        list(professionalList);
+                .eq("rank_num", 3)
+                .likeRight("major_code", 2)
+                .like("major_name",name));
+//        list(academicList);
+//        list(professionalList);
         ArrayList<List<Major>> lists = new ArrayList<>();
         lists.add(academicList);
         lists.add(professionalList);

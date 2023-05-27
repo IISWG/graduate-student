@@ -30,4 +30,15 @@ public class ArticleAdditionalInformationServiceImpl extends ServiceImpl<Article
     public boolean colReduce1(Long articleId) {
         return articleAdditionalInformationMapper.colReduce1(articleId);
     }
+
+    @Override
+    public boolean praAdd1(Long articleId) {
+        return articleAdditionalInformationMapper.praAdd1(articleId);
+    }
+
+    @Override
+    public boolean praReduce1(Long articleId) {
+        return articleAdditionalInformationMapper.praReduce1(articleId);
+    }
+
 }

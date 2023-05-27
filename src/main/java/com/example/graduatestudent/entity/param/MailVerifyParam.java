@@ -9,5 +9,6 @@ public class MailVerifyParam {
     private String oldpassword;
     private String email;
     private String password;
+    private String password2;
     private String code;
 }

@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.graduatestudent.entity.UserTestInfo;
 import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.OkResult;
+import com.example.graduatestudent.service.IArticleInformationService;
 import com.example.graduatestudent.service.IUserTestInfoService;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +25,9 @@ import javax.annotation.Resource;
 public class UserTestInfoController {
     @Resource
     IUserTestInfoService userTestInfoService;
+    @Resource
+    IArticleInformationService articleInformationService;
+
     @PostMapping("/update")
     @ResponseBody
     public BaseResult update(@RequestBody UserTestInfo userTestInfo) {
@@ -37,8 +42,10 @@ public class UserTestInfoController {
                 .set(userTestInfo.getUndergraduateUniversity() != null, "undergraduate_university", userTestInfo.getUndergraduateUniversity())
                 .eq("id", userTestInfo.getId()));
         if (save) {
+            articleInformationService.addDocuments(userTestInfo.getId());
             return new OkResult("更新成功！");
         } else {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new BaseResult(401, "更新失败！");
         }
 

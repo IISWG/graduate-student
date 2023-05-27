@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduatestudent.entity.*;
 import com.example.graduatestudent.entity.param.SelectArticlCirleParam;
 import com.example.graduatestudent.entity.param.SelectArticleParam;
+import com.example.graduatestudent.entity.result.BaseResult;
+import com.example.graduatestudent.entity.result.OkResult;
 import com.example.graduatestudent.entity.result.PageResult;
+import com.example.graduatestudent.entity.result.ServerErrResult;
 import com.example.graduatestudent.mapper.*;
 import com.example.graduatestudent.service.IArticleInformationService;
 import com.meilisearch.sdk.Client;
@@ -18,6 +21,7 @@ import com.meilisearch.sdk.exceptions.MeilisearchException;
 import com.meilisearch.sdk.model.SearchResultPaginated;
 import com.meilisearch.sdk.model.Searchable;
 import com.meilisearch.sdk.model.Settings;
+import com.meilisearch.sdk.model.TaskInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -58,6 +62,10 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
     UserInformationMapper userInformationMapper;
     @Resource
     CommentInformationMapper commentInformationMapper;
+    @Resource
+    UserTestInfoMapper userTestInfoMapper;
+    @Resource
+    Client client;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -169,7 +177,7 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
     @Override
     public List<ArticleInformation> getAttentionUserOfArticle(String userId) {
         List<Attention> attentionList = attentionMapper.selectList(new QueryWrapper<Attention>()
-                .eq("user_id", userId).eq("is_attention",1));
+                .eq("user_id", userId).eq("is_attention", 1));
         ArrayList<ArticleInformation> articleInformations = new ArrayList<>(attentionList.size() * 10);
         for (Attention attention : attentionList) {
             UserInformation userInformation = userInformationMapper.selectById(attention.getFocusUserId());
@@ -206,7 +214,7 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
 
     @Override
     public PageResult getCircleOfArticle(@RequestBody SelectArticlCirleParam param) throws MeilisearchException {
-        Config config = new Config("http://47.120.9.82:7700","masterKey");
+        Config config = new Config("http://47.120.9.82:7700", "masterKey");
         Client client = new Client(config);
         Settings settings = new Settings();
         settings.setSearchableAttributes(new String[]{"userTestInfo.major", "userTestInfo.university", "articleTitle", "articleContent"});
@@ -216,7 +224,7 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
                 .append(Strings.isBlank(param.getSchoolId()) ? "" : param.getSchoolId())
                 .append(Strings.isBlank(param.getContent()) ? "" : param.getContent());
         String search = stringBuffer.toString();
-        log.info("search: {}",search);
+        log.info("search: {}", search);
         SearchRequest searchRequest = SearchRequest.builder()
                 .q(search)
                 .page(param.getPageNum())
@@ -227,11 +235,11 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
                 .build();
         Searchable information = client.index("article_information").search(searchRequest);
         SearchResultPaginated article_information = (SearchResultPaginated) information;
-        log.info("getFacetDistribution:{}"+JSON.toJSONString(article_information.getFacetDistribution()));
-        log.info("getHits:{}"+JSON.toJSONString(article_information.getHits()));
-        log.info("getQuery:{}"+JSON.toJSONString(article_information.getQuery()));
-        log.info("article_information.getTotalHits():{}"+article_information.getTotalHits());
-        log.info("article_information.getTotalPages():{}"+article_information.getTotalPages());
+        log.info("getFacetDistribution:{}" + JSON.toJSONString(article_information.getFacetDistribution()));
+        log.info("getHits:{}" + JSON.toJSONString(article_information.getHits()));
+        log.info("getQuery:{}" + JSON.toJSONString(article_information.getQuery()));
+        log.info("article_information.getTotalHits():{}" + article_information.getTotalHits());
+        log.info("article_information.getTotalPages():{}" + article_information.getTotalPages());
 //        article_information.getTotalPages();
         PageResult pageResult = new PageResult();
         pageResult.setPages((long) article_information.getTotalPages());
@@ -246,5 +254,88 @@ public class ArticleInformationServiceImpl extends ServiceImpl<ArticleInformatio
         }
         pageResult.setRecords(articleInformations);
         return pageResult;
+    }
+
+    @Override
+    public ArticleInformation getArticleListByArticleId(Long id) {
+        ArticleInformation articleInformation = articleInformationMapper.selectById(id);
+        List<TagMap> tagMapList = tagMapMapper.selectList(new QueryWrapper<TagMap>().eq("article_id", articleInformation.getId()));
+        ArrayList<ArticleTag> articleTags = new ArrayList<>();
+        for (TagMap tagMap : tagMapList) {
+            ArticleTag articleTag = articleTagMapper.selectById(tagMap.getTagId());
+            articleTags.add(articleTag);
+        }
+        ArticleAdditionalInformation articleAdditionalInformation = articleAdditionalInformationMapper
+                .selectOne(new QueryWrapper<ArticleAdditionalInformation>()
+                        .eq("article_id", articleInformation.getId()));
+        UserInformation userInformation = userInformationMapper.selectById(articleInformation.getUserId());
+        articleInformation.setLabelList(articleTags).setUserInformation(userInformation);
+        articleInformation.setArticleAdditionalInformation(articleAdditionalInformation);
+        return articleInformation;
+    }
+
+    @Override
+    public BaseResult searchArticle(SelectArticlCirleParam param) {
+
+        try {
+//            Settings settings = new Settings();
+//            settings.setSearchableAttributes(new String[]{});
+//            client.index("article_information").updateSettings(settings);
+            SearchRequest searchRequest = SearchRequest.builder()
+                    .q(param.getContent())
+                    .page(param.getPageNum())
+                    .limit(param.getPageSize())
+                    .attributesToHighlight(new String[]{"articleTitle", "articleType", "articleLabelList", "articleContent"})
+                    .sort(new String[]{"latestUpdateTime:desc"})
+                    .build();
+            SearchResultPaginated article_information = (SearchResultPaginated) client.index("article_information").search(searchRequest);
+            PageResult pageResult = new PageResult();
+            pageResult.setPages((long) article_information.getTotalPages());
+            pageResult.setTotal((long) article_information.getTotalHits());
+            List<ArticleInformation> articleInformations = JSON.parseArray(JSON.toJSONString(article_information.getHits()), ArticleInformation.class);
+            pageResult.setRecords(articleInformations);
+            return new OkResult(pageResult);
+        } catch (MeilisearchException e) {
+
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return new ServerErrResult("搜索失败！");
+        }
+    }
+
+    @Override
+    public TaskInfo addDocuments(Long userId) {
+        try {
+            List<ArticleInformation> list = articleInformationMapper.selectList(
+                    new QueryWrapper<ArticleInformation>().eq("user_id", userId));
+            for (ArticleInformation articleInformation : list) {
+                UserTestInfo userTestInfo = userTestInfoMapper.selectById(articleInformation.getUserId());
+                List<TagMap> tagMapList = tagMapMapper.selectList(new QueryWrapper<TagMap>().eq("article_id", articleInformation.getId()));
+                ArrayList<ArticleTag> articleTags = new ArrayList<>();
+                for (TagMap tagMap : tagMapList) {
+                    ArticleTag articleTag = articleTagMapper.selectById(tagMap.getTagId());
+                    articleTags.add(articleTag);
+                }
+                ArticleAdditionalInformation articleAdditionalInformation = articleAdditionalInformationMapper
+                        .selectOne(new QueryWrapper<ArticleAdditionalInformation>()
+                                .eq("article_id", articleInformation.getId()));
+                UserInformation userInformation = userInformationMapper.selectById(articleInformation.getUserId());
+                articleInformation.setLabelList(articleTags).setUserInformation(userInformation);
+                articleInformation.setArticleAdditionalInformation(articleAdditionalInformation);
+                articleInformation.setUserTestInfo(userTestInfo);
+            }
+            Config config = new Config("http://47.120.9.82:7700", "masterKey");
+            Client client = new Client(config);
+            TaskInfo article_information = null;
+
+            article_information = client.index("article_information").updateDocuments(JSON.toJSONString(list));
+            return article_information;
+        } catch (MeilisearchException e) {
+            e.printStackTrace();
+            log.error("调用接口失败:" + e.getMessage());
+            return null;
+        }
+
+
     }
 }

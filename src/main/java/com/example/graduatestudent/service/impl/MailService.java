@@ -3,12 +3,15 @@ package com.example.graduatestudent.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.graduatestudent.entity.UserInformation;
+import com.example.graduatestudent.entity.UserTestInfo;
 import com.example.graduatestudent.entity.param.MailVerifyParam;
 import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.OkResult;
 import com.example.graduatestudent.entity.result.ServerErrResult;
 import com.example.graduatestudent.mapper.UserInformationMapper;
+import com.example.graduatestudent.mapper.UserTestInfoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,6 +35,8 @@ public class MailService {
 
     @Resource
     private UserInformationMapper blogPersonalInformMapper;
+    @Resource
+    private UserTestInfoMapper userTestInfoMapper;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -119,7 +124,6 @@ public class MailService {
             log.error("验证码失效或没发验证码！");
             return new ServerErrResult("验证码失效或没发验证码！");
         }else if (!code.equals(voCode)){
-            //return "error,请重新注册";
             log.error("验证码错误！");
             return new ServerErrResult("验证码错误！");
         }
@@ -128,59 +132,65 @@ public class MailService {
 //        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         blogPersonalInform.setEmail(mailVerifyParam.getEmail())
                 .setPassword(mailVerifyParam.getPassword())
-//                .setPassword(bCryptPasswordEncoder.encode(mailVerifyParam.getPassword()))
                 .setNickname(mailVerifyParam.getEmail()+"graduate");
-//                .set(LocalDateTime.now())
-//                .setUpdateTime(LocalDateTime.now());
         int insert = blogPersonalInformMapper.insert(blogPersonalInform);
-        if (insert == 0) {
+        int insertUserTestInfo = 1;
+        if (insert != 0) {
+            UserInformation userInformation = blogPersonalInformMapper.selectOneByEmail(blogPersonalInform.getEmail());
+            UserTestInfo userTestInfo = new UserTestInfo();
+            userTestInfo.setId(userInformation.getId());
+            insertUserTestInfo = userTestInfoMapper.insert(userTestInfo);
+        }
+        if (insert == 0 || insertUserTestInfo == 0) {
             log.error("注册失败！");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ServerErrResult("注册失败！");
         }
         //跳转成功页面
         return new OkResult("注册成功！","");
     }
 
-   public BaseResult changePassword(MailVerifyParam mailVerifyParam){
+   public BaseResult changePassword(@NotNull MailVerifyParam mailVerifyParam){
        String voCode = mailVerifyParam.getCode();
        String mail = mailVerifyParam.getEmail();
        String password = mailVerifyParam.getPassword();
        String oldPassword = mailVerifyParam.getOldpassword();
        //BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
        try {
-           if (oldPassword != null && !oldPassword.equals("")) {
-//               String encode = bCryptPasswordEncoder.encode(oldpassword);
-//               System.out.println("encode:"+encode);
-               UserInformation blogPersonalInform = blogPersonalInformMapper.selectOne(new QueryWrapper<UserInformation>().eq("email", mail));
-               System.out.println("UserInformation:"+blogPersonalInform);
-               if (blogPersonalInform != null) {
-//                   if (bCryptPasswordEncoder.matches(oldpassword, blogPersonalInform.getPassword())) {
-                   if (oldPassword.equals(password)) {
-//                       blogPersonalInform.setPassword(bCryptPasswordEncoder.encode(password))
-                       blogPersonalInform.setPassword(password);
-//                                          .setUpdateTime(LocalDateTime.now());
-                       int updateById = blogPersonalInformMapper.updateById(blogPersonalInform);
-                       if (updateById == 0) {
-                           log.error("修改密码失败！");
-                           return new ServerErrResult("修改密码失败！");
-                       }
-                       //跳转成功页面
-                       return new OkResult("修改密码成功！", "");
-                   }
-                   else {
-                       return new ServerErrResult("旧密码输入错误！");
-                   }
+//           if (oldPassword != null && !oldPassword.equals("")) {
+////               String encode = bCryptPasswordEncoder.encode(oldpassword);
+////               System.out.println("encode:"+encode);
+//               UserInformation blogPersonalInform = blogPersonalInformMapper.selectOne(new QueryWrapper<UserInformation>().eq("email", mail));
+//               System.out.println("UserInformation:"+blogPersonalInform);
+//               if (blogPersonalInform != null) {
+////                   if (bCryptPasswordEncoder.matches(oldpassword, blogPersonalInform.getPassword())) {
+//                   if (oldPassword.equals(password)) {
+////                       blogPersonalInform.setPassword(bCryptPasswordEncoder.encode(password))
+//                       blogPersonalInform.setPassword(password);
+////                                          .setUpdateTime(LocalDateTime.now());
+//                       int updateById = blogPersonalInformMapper.updateById(blogPersonalInform);
+//                       if (updateById == 0) {
+//                           log.error("修改密码失败！");
+//                           return new ServerErrResult("修改密码失败！");
+//                       }
+//                       //跳转成功页面
+//                       return new OkResult("修改密码成功！", "");
+//                   }
+//                   else {
+//                       return new ServerErrResult("旧密码输入错误！");
+//                   }
+//
+//               } else {
+//                   return new ServerErrResult("账号问题！");
+//               }
+//           }
 
-               } else {
-                   return new ServerErrResult("账号问题！");
-               }
-           }
            String code = redisTemplate.opsForValue().get(mail);
            System.out.println("getredis_code:" + code);
            UserInformation personalInform = blogPersonalInformMapper.selectOne(new QueryWrapper<UserInformation>().eq("email", mail));
            if (personalInform == null) {
                log.error("该邮箱没被注册！");
-               return new ServerErrResult("该邮箱没被注册！");
+               return new ServerErrResult("该邮箱没被注册！请先注册！");
            }
            //如果email数据为空，或者不一致，注册失败
            if (code == null || code.isEmpty()) {

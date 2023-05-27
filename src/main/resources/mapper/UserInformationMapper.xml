@@ -16,5 +16,9 @@
     <sql id="Base_Column_List">
         id, password, email, telephone_number, head_picture, nickname
     </sql>
+    <select id="selectOneByEmail" resultType="com.example.graduatestudent.entity.UserInformation">
+        select * from user_information
+        where email = #{email}
+    </select>
 
 </mapper>

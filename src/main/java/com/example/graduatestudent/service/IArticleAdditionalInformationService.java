@@ -15,4 +15,8 @@ public interface IArticleAdditionalInformationService extends IService<ArticleAd
     public boolean colAdd1(Long articleId);
 
     boolean colReduce1(Long articleId);
+
+    public boolean praAdd1(Long articleId);
+
+    public boolean praReduce1(Long articleId);
 }

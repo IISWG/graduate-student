@@ -32,6 +32,7 @@ import java.util.List;
 public class ArticleInformationController {
     @Resource
     IArticleInformationService articleInformationService;
+
     /**
      * @description: 插入文章
      * @author: muxin
@@ -63,7 +64,7 @@ public class ArticleInformationController {
     }
 
     @GetMapping("/deleteArticle")
-    @ApiOperation(value = "插入文章", notes = "")
+    @ApiOperation(value = "删除文章", notes = "")
     public BaseResult deleteArticle(Long articleId) {
         try {
             boolean removeById = articleInformationService.removeById(articleId);
@@ -111,6 +112,14 @@ public class ArticleInformationController {
         return new OkResult(articleListByUserId);
     }
 
+    @GetMapping("/getArticleListByArticleId")
+    @ApiOperation(value = "通过文章id获取文章", notes = "")
+    public BaseResult getArticleListByArticleId(Long id) {
+
+        ArticleInformation articleListByArticleId = articleInformationService.getArticleListByArticleId(id);
+        return new OkResult(articleListByArticleId);
+    }
+
     @GetMapping("/getArticleListByType")
     @ApiOperation(value = "通过文章类型获取文章", notes = "")
     public BaseResult getArticleListByType(String type, Integer pageSize, Integer pageNum) {
@@ -141,4 +150,11 @@ public class ArticleInformationController {
         PageResult articleInformations = articleInformationService.getCircleOfArticle(selectArticlCirleParam);
         return new OkResult(articleInformations);
     }
+
+    @GetMapping("/searchArticle")
+    @ApiOperation(value = "通过关键字搜索文章", notes = "")
+    public BaseResult searchArticle(SelectArticlCirleParam param) {
+        return articleInformationService.searchArticle(param);
+    }
+
 }

@@ -5,13 +5,16 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.graduatestudent.entity.UserInformation;
+import com.example.graduatestudent.entity.UserTestInfo;
 import com.example.graduatestudent.entity.param.MailVerifyParam;
 import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.OkResult;
 import com.example.graduatestudent.entity.result.ServerErrResult;
 import com.example.graduatestudent.service.IUserInformationService;
+import com.example.graduatestudent.service.IUserTestInfoService;
 import com.example.graduatestudent.service.impl.MailService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +26,8 @@ public class UserController {
     @Resource
     IUserInformationService userInformationService;
 
+    @Resource
+    IUserTestInfoService userTestInfoService;
     @Resource
     MailService mailService;
 
@@ -119,9 +124,15 @@ public class UserController {
     @ResponseBody
     public BaseResult enroll(@RequestBody UserInformation userInformation) {
         boolean save = userInformationService.save(userInformation);
-        if (save) {
+        UserInformation userInfo = userInformationService.selectOneByEmail(userInformation.getEmail());
+        UserTestInfo userTestInfo = new UserTestInfo();
+        userTestInfo.setId(userInfo.getId());
+        boolean saveUserTestInfo = userTestInfoService.save(userTestInfo);
+
+        if (save && saveUserTestInfo) {
             return new OkResult();
         } else {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new BaseResult(401, "注册失败！");
         }
 
@@ -136,6 +147,7 @@ public class UserController {
         if (save) {
             return new OkResult("更新头像成功！");
         } else {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new BaseResult(401, "更新头像失败！");
         }
 
@@ -150,6 +162,7 @@ public class UserController {
         if (save) {
             return new OkResult("更新昵称成功！");
         } else {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new BaseResult(401, "更新昵称失败！");
         }
 

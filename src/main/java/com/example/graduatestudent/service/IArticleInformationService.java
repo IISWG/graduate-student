@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.graduatestudent.entity.ArticleInformation;
 import com.example.graduatestudent.entity.param.SelectArticlCirleParam;
 import com.example.graduatestudent.entity.param.SelectArticleParam;
+import com.example.graduatestudent.entity.result.BaseResult;
 import com.example.graduatestudent.entity.result.PageResult;
 import com.meilisearch.sdk.exceptions.MeilisearchException;
+import com.meilisearch.sdk.model.TaskInfo;
 
 import java.util.List;
 
@@ -27,11 +29,11 @@ public interface IArticleInformationService extends IService<ArticleInformation>
 
     List<ArticleInformation> getAttentionUserOfArticle(String userId);
 
-//    List<ArticleInformation> getCircleOfArticle(String majorCode, Long schoolId) throws MeilisearchException;
-
-  //  List<ArticleInformation> getCircleOfArticle(String content, String majorCode, String schoolId) throws MeilisearchException;
-
     PageResult getCircleOfArticle(SelectArticlCirleParam selectArticlCirleParam) throws MeilisearchException;
 
-    //List<ArticleInformation> getCircleOfArticle(SelectArticlCirleParam selectArticlCirleParam);
+    public ArticleInformation getArticleListByArticleId(Long id);
+
+    BaseResult searchArticle(SelectArticlCirleParam param);
+
+    public TaskInfo addDocuments(Long userId);
 }
